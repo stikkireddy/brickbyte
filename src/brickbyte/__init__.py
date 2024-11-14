@@ -1,6 +1,8 @@
 import os
 import subprocess
 import shutil
+from pathlib import Path
+
 import virtualenv
 from typing import Optional, List, Dict, Union
 
@@ -63,7 +65,8 @@ class BrickByte:
     def __init__(self, sources: Union[List[Source], str],
                  destination: Destination,
                  sources_install: Optional[Dict[str, str]] = None,
-                 destination_install: Optional[str] = None):
+                 destination_install: Optional[str] = None,
+                 base_venv_directory: Optional[str] = None):
         if isinstance(sources, str):
             self._sources = [sources]
         else:
@@ -73,16 +76,21 @@ class BrickByte:
         self._destination_install = destination_install or {}
         self._source_env_managers: Dict[str, VirtualEnvManager] = {}
         self._destination_env_manager: Optional[VirtualEnvManager] = None
+
+        self._base_venv_directory = base_venv_directory or str(Path.home())
         assert len(self._sources) > 0, "At least one source should be provided"
+
 
     def setup(self):
         for source in self._sources:
-            source_manager = VirtualEnvManager(f'/tmp/brickbyte-{source}')
+            path = os.path.join(self._base_venv_directory, f'brickbyte-{source}')
+            source_manager = VirtualEnvManager(path)
             source_manager.create_virtualenv()
             source_manager.install_airbyte_source(source, self._sources_install.get(source))
             self._source_env_managers[source] = source_manager
 
-        destination_env_manager = VirtualEnvManager(f'/tmp/brickbyte-destination-databricks')
+        path = os.path.join(self._base_venv_directory, f'brickbyte-destination-databricks')
+        destination_env_manager = VirtualEnvManager(path)
         destination_env_manager.create_virtualenv()
         destination_env_manager.install_airbyte_from_file(self._destination_install)
         self._destination_env_manager = destination_env_manager
@@ -92,7 +100,8 @@ class BrickByte:
             import airbyte as ab
         except ImportError:
             print("please install airbyte it is not installed")
-        return ab.new_local_cache(cache_name="brickbyte", cache_dir="/tmp/brickbyte/cache/", cleanup=True)
+        path = os.path.join(self._base_venv_directory, f'brickbyte/cache/')
+        return ab.new_local_cache(cache_name="brickbyte", cache_dir=path, cleanup=True)
 
     def get_source_exec_path(self, source: Source):
         bin_path = self._source_env_managers[source].bin_path
