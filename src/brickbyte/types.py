@@ -1,6 +1,6 @@
-from typing import Literal, List
+from typing import Literal
 
-_sources: List[str] = [
+Source = Literal[
     "source-adjust",
     "source-airtable",
     "source-alpha-vantage",
@@ -104,6 +104,5 @@ _sources: List[str] = [
     "source-zenloop"
 ]
 
-Source = Literal[*_sources]
 
 Destination = Literal["destination-databricks"]
