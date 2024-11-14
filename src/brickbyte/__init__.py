@@ -94,11 +94,11 @@ class BrickByte:
             print("please install airbyte it is not installed")
         return ab.new_local_cache(cache_name="brickbyte", cache_dir="/tmp/brickbyte/cache/", cleanup=True)
 
-    def source_exec_path(self, source: Source):
+    def get_source_exec_path(self, source: Source):
         bin_path = self._source_env_managers[source].bin_path
         return os.path.join(bin_path, source)
 
-    def destination_exec_path(self):
+    def get_destination_exec_path(self):
         return os.path.join(self._destination_env_manager.bin_path, "destination-databricks")
 
     def cleanup(self):
