@@ -1,0 +1,51 @@
+[project]
+name = "brickbyte"
+version = "0.1.0"
+description = "Library for PyAirbyte to run on Databricks serverless compute"
+authors = [
+    { name="Sri Tikkireddy", email="sri.tikkireddy@databricks.com" },
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.license]
+file = "LICENSE.txt"
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "ruff==0.6.4",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+  # isort
+  "I",
+  # bugbear rules
+  "B",
+  # remove unused imports
+  "F401",
+  # bare except statements
+  "E722",
+  # print statements
+  "T201",
+  "T203",
+  # misuse of typing.TYPE_CHECKING
+  "TCH004",
+  # import rules
+  "TID251",
+  # undefined-local-with-import-star
+  "F403",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
