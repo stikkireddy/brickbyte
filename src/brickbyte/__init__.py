@@ -66,8 +66,8 @@ class BrickByte:
                  destination_install: Optional[str] = None):
         self._sources = sources
         self._destination = destination
-        self._sources_install = sources_install
-        self._destination_install = destination_install
+        self._sources_install = sources_install or {}
+        self._destination_install = destination_install or {}
         self._source_env_managers: Dict[str, VirtualEnvManager] = {}
         self._destination_env_manager: Optional[VirtualEnvManager] = None
         assert len(sources) > 0, "At least one source should be provided"
