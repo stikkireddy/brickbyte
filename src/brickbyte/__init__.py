@@ -2,7 +2,7 @@ import os
 import subprocess
 import shutil
 import virtualenv
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 
 from brickbyte.types import Source, Destination
 
@@ -60,17 +60,20 @@ class VirtualEnvManager:
 
 class BrickByte:
 
-    def __init__(self, sources: List[Source],
+    def __init__(self, sources: Union[List[Source], str],
                  destination: Destination,
                  sources_install: Optional[Dict[str, str]] = None,
                  destination_install: Optional[str] = None):
-        self._sources = sources
+        if isinstance(sources, str):
+            self._sources = [sources]
+        else:
+            self._sources = sources
         self._destination = destination
         self._sources_install = sources_install or {}
         self._destination_install = destination_install or {}
         self._source_env_managers: Dict[str, VirtualEnvManager] = {}
         self._destination_env_manager: Optional[VirtualEnvManager] = None
-        assert len(sources) > 0, "At least one source should be provided"
+        assert len(self._sources) > 0, "At least one source should be provided"
 
     def setup(self):
         for source in self._sources:
