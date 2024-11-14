@@ -74,15 +74,22 @@ class BrickByte:
 
     def setup(self):
         for source in self._sources:
-            source_manager = VirtualEnvManager(f'/tmp/airbyte-{source}')
+            source_manager = VirtualEnvManager(f'/tmp/brickbyte-{source}')
             source_manager.create_virtualenv()
             source_manager.install_airbyte_source(source, self._sources_install.get(source))
             self._source_env_managers[source] = source_manager
 
-        destination_env_manager = VirtualEnvManager(f'/tmp/airbyte-destination-databricks')
+        destination_env_manager = VirtualEnvManager(f'/tmp/brickbyte-destination-databricks')
         destination_env_manager.create_virtualenv()
         destination_env_manager.install_airbyte_from_file(self._destination_install)
         self._destination_env_manager = destination_env_manager
+
+    def get_or_create_cache(self):
+        try:
+            import airbyte as ab
+        except ImportError:
+            print("please install airbyte it is not installed")
+        return ab.new_local_cache(cache_name="brickbyte", cache_dir="/tmp/brickbyte/cache/", cleanup=True)
 
     def source_exec_path(self, source: Source):
         bin_path = self._source_env_managers[source].bin_path
