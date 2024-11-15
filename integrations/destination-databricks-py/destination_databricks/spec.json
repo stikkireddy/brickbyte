@@ -40,6 +40,12 @@
         "examples": ["default"],
         "default": "default",
         "order": 4
+      },
+      "staging_volume_path": {
+        "title": "Default Stage Volume Path",
+        "description": "The Default Stage Volume Path which will stage jsonl files.",
+        "type": "string",
+        "order": 5
       }
     }
   }

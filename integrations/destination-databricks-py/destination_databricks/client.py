@@ -9,13 +9,15 @@ class DatabricksSqlClient:
                  http_path: str,
                  token: str,
                  catalog: str,
-                 schema: str
+                 schema: str,
+                 staging_volume_path: str = None,
                  ):
         self.server_hostname = server_hostname
         self.http_path = http_path
         self.token = token
         self.catalog = catalog
         self.schema = schema
+        self.staging_volume_path = staging_volume_path
 
     def open(self):
         connection = sql.connect(

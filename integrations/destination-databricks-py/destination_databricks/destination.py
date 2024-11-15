@@ -2,12 +2,14 @@ import json
 import logging
 from datetime import datetime
 from logging import getLogger
+from os import write
 from typing import Any, Iterable, Mapping
 from uuid import uuid4
 
 from airbyte_cdk.destinations import Destination
 from airbyte_cdk.models import AirbyteConnectionStatus, AirbyteMessage, ConfiguredAirbyteCatalog, DestinationSyncMode, Status, Type
 from destination_databricks.client import DatabricksSqlClient
+from .staged_writer import create_databricks_staged_writer
 
 from .writer import create_databricks_writer
 
@@ -37,7 +39,11 @@ class DestinationDatabricks(Destination):
         streams = {s.stream.name for s in configured_catalog.streams}
         client = DatabricksSqlClient(**config)
 
-        writer = create_databricks_writer(client, logger)
+        if client.staging_volume_path is not None:
+            print("Using staged writer")
+            writer = create_databricks_staged_writer(client, logger)
+        else:
+            writer = create_databricks_writer(client, logger)
 
         for configured_stream in configured_catalog.streams:
             if configured_stream.destination_sync_mode == DestinationSyncMode.overwrite:
