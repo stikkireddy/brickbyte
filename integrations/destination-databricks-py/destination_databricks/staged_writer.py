@@ -136,7 +136,7 @@ class DatabricksSqlStagedWriterImpl(DatabricksSqlStagedWriter):
                 for idx, (id, time, record) in enumerate(data):
                     temp_file.write(json.dumps({
                         "_airbyte_ab_id": id,
-                        "_airbyte_emitted_at": time,
+                        "_airbyte_emitted_at": str(time),
                         "_airbyte_data": record
                     }))
                     if idx != len(data) - 1:
