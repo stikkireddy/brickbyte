@@ -97,7 +97,7 @@ class DatabricksSqlStagedWriterImpl(DatabricksSqlStagedWriter):
     and flushed using INSERT INTO SQL statement.
     """
 
-    flush_interval = 1000
+    flush_interval = 250000
 
     def __init__(self, client: DatabricksSqlClient) -> None:
         """
