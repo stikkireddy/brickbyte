@@ -136,7 +136,7 @@ class DatabricksSqlStagedWriterImpl(DatabricksSqlStagedWriter):
                 for idx, (id, time, record) in enumerate(data):
                     temp_file.write(json.dumps({
                         "_airbyte_ab_id": id,
-                        "_airbyte_emitted_at": str(time),
+                        "_airbyte_emitted_at": time,
                         "_airbyte_data": record
                     }))
                     if idx != len(data) - 1:
@@ -150,7 +150,10 @@ class DatabricksSqlStagedWriterImpl(DatabricksSqlStagedWriter):
                                           this_batch_id,
                                           "data.jsonl")
                 put_statement = f"PUT '{temp_file_absolute_path}' INTO '{stage_path}' OVERWRITE"
-                copy_into_statement = f"COPY INTO _airbyte_raw_{table} FROM '{stage_path}' FILEFORMAT = JSON"
+                copy_into_statement = (f"COPY INTO _airbyte_raw_{table} FROM "
+                                       f"(SELECT _airbyte_ab_id, "
+                                       f"cast(_airbyte_emitted_at as TIMESTAMP) as _airbyte_emitted_at "
+                                       f"_airbyte_data from '{stage_path}') FILEFORMAT = JSON")
                 cleanup_statement = f"REMOVE '{stage_path}'"
                 print("Running", put_statement)
                 cursor.execute(put_statement)
