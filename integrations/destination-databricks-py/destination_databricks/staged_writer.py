@@ -4,10 +4,8 @@ import os
 import tempfile
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 
 from airbyte_cdk.models import AirbyteConnectionStatus, Status
-from virtualenv.create.via_global_ref.builtin.ref import PathRef
 
 from destination_databricks.client import DatabricksSqlClient
 
