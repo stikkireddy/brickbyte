@@ -33,7 +33,7 @@ class DatabricksSqlClient:
             access_token=os.getenv("DATABRICKS_TOKEN", self.token),
             catalog=self.catalog,
             schema=self.schema,
-            staging_allowed_local_path=self.local_stage_dir if self.staging_volume_path is not None else None,
+            staging_allowed_local_path=self.local_stage_dir
         )
 
         return connection.cursor()
