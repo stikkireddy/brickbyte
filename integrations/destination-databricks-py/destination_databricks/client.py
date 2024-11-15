@@ -14,13 +14,17 @@ class DatabricksSqlClient:
                  staging_volume_path: str = None,
                  local_temp_dir: str = None
                  ):
-        self.local_stage_dir = local_temp_dir or os.path.join(Path.home(), "local_brickbyte_stage")
         self.server_hostname = server_hostname
         self.http_path = http_path
         self.token = token
         self.catalog = catalog
         self.schema = schema
         self.staging_volume_path = staging_volume_path
+        if self.staging_volume_path is not None:
+            self.local_stage_dir = local_temp_dir or os.path.join(Path.home(), "local_brickbyte_stage")
+            os.makedirs(self.local_stage_dir, exist_ok=True)
+        else:
+            self.local_stage_dir = None
 
     def open(self):
         connection = sql.connect(
