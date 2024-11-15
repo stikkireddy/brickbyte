@@ -4,8 +4,11 @@ import os
 import tempfile
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
 
 from airbyte_cdk.models import AirbyteConnectionStatus, Status
+from virtualenv.create.via_global_ref.builtin.ref import PathRef
+
 from destination_databricks.client import DatabricksSqlClient
 
 
@@ -130,7 +133,7 @@ class DatabricksSqlStagedWriterImpl(DatabricksSqlStagedWriter):
 
         # stage the data in a jsonl file using TemporaryFile
         # then load the data into the table
-        with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(mode='w+', dir=self.client.local_stage_dir) as temp_file:
             for table, data in self._buffer.items():
                 for idx, (id, time, record) in enumerate(data):
                     temp_file.write(json.dumps({
